@@ -48,7 +48,7 @@ jobs:
           $securePass = ConvertTo-SecureString $password -AsPlainText -Force
           New-LocalUser -Name " RRdp " -Password $securePass -AccountNeverExpires
           Add-LocalGroupMember -Group "Administrators" -Member " RRdp "
-          Add-LocalGroupMember -Group "Remote Desktop Users" -Member "RRDP"
+          Add-LocalGroupMember -Group "Remote Desktop Users" -Member "RRdp"
           
           echo " RRdp _CREDS=User: RRdp | Password: $password" >> $env:GITHUB_ENV
           
@@ -86,24 +86,24 @@ jobs:
           }
           echo "TAILSCALE_IP=$tsIP" >> $env:GITHUB_ENV
       
-      - name: Verify RRDP Accessibility
+      - name: Verify RRdp Accessibility
         run: |
           Write-Host "Tailscale IP: $env:TAILSCALE_IP"
           
           # Test connectivity using Test-NetConnection against the Tailscale IP on port 3389
           $testResult = Test-NetConnection -ComputerName $env:TAILSCALE_IP -Port 3389
           if (-not $testResult.TcpTestSucceeded) {
-              Write-Error "TCP connection to RRDP port 3389 failed"
+              Write-Error "TCP connection to RRdp port 3389 failed"
               exit 1
           }
           Write-Host "TCP connectivity successful!"
 
       - name: Maintain Connection
         run: |
-          Write-Host "`n=== RRDP ACCESS ==="
+          Write-Host "`n=== RRdp ACCESS ==="
           Write-Host "Address: $env:TAILSCALE_IP"
-          Write-Host "Username: RRDP"
-          Write-Host "Password: $(echo $env:RRDP_CREDS)"
+          Write-Host "Username: RRdp"
+          Write-Host "Password: $(echo $env:RRdp_CREDS)"
           Write-Host "==================`n"
           
           # Keep runner active indefinitely (or until manually cancelled)
